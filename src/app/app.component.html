@@ -1,3 +1,13 @@
-<h1>
-  {{title}}
-</h1>
+<div class="row">
+  <div class="col-md-8">
+    <a routerLink="/home">Home</a> | <a routerLink="/weighings">Weighings</a> |  <a routerLink="/login">Login</a>
+ </div>
+  <div class="col-md-4"><span *ngIf="userName">User: {{userName}}</span></div>
+
+  
+  <div class="row">
+  <div class="col-md-12">
+   <router-outlet></router-outlet>
+  </div>
+  </div>
+</div>

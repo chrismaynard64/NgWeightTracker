@@ -1,0 +1,158 @@
+﻿
+<div>
+     <div class="row">
+
+        <div class="col-md-2"></div>
+        <div class="panel col-md-8 col-sm-12">
+            <div class="panel-heading">{{user.weigherName}}</div>
+            <div class="panel-body">
+
+                <table>
+                    <tr class="row" *ngFor="let weigh of weighings">
+                        <td  *ngIf="!weigh.inEdit"  class="col-md-3">{{weigh.weighDate | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                        <td *ngIf="!weigh.inEdit && user.units == 0" class="col-md-2">{{weigh.weightPounds}} lbs</td>
+                        <td *ngIf="!weigh.inEdit && user.units == 1" class="col-md-2">{{weigh.weightSt}}  St {{weigh.weightStlbs}}  {{weigh.weightStlbs ? "lbs" : ""}}</td>
+                        <td *ngIf="!weigh.inEdit && user.units == 2" class="col-md-2">{{weigh.weightKilos}} kg</td>
+                       <td *ngIf="!weigh.inEdit"  class="col-md-7">{{weigh.comment}}</td>
+                        <td *ngIf="!weigh.inEdit" ><button (click)="editWeighing(weigh, $event)">Edit</button></td>
+                        <td *ngIf="!weigh.inEdit" ><button (click)="deleteWeighing(weigh, $event)">Delete</button></td>
+
+                        <td  *ngIf="weigh.inEdit" colspan="4">
+                            <div class="edit-panel">
+                                 <div class="row">
+                                    <div class="col-md-12">
+                                        <fieldset class="form-group">
+                                            <div class="col-md-4"><label [attr.for]="'txtWeightKilos' + weigh.id" class="control-label"> Weight</label></div>
+                                            <div class="col-md-4">
+                                                <span *ngIf="user.units == 0">
+                                                    <input type="number" [id]="'txtWeightLbs' + weigh.id" [(ngModel)]="weigh.weightPounds" required #weightCtl (keyup)="onKeyuplbs($event, weigh)" class="units" /> lbs
+                                                </span>
+                                                <span *ngIf="user.units == 1">
+                                                    <input type="number" [id]="'txtWeightsts' + weigh.id" [(ngModel)]="weigh.weightSt" required #weightCtl (keyup)="onKeyupst($event, weigh)" class="units" /> St
+                                                    <input type="number" [id]="'txtWeightstlbs' + weigh.id" [(ngModel)]="weigh.weightStlbs" required #weightCtl (keyup)="onKeyupst($event, weigh)" class="units" /> lbs
+                                                </span>
+                                                <span *ngIf="user.units == 2">
+                                                    <input type="number" [id]="'txtWeightKilos' + weigh.id" [(ngModel)]="weigh.weightKilos" required #weightCtl (keyup)="onKeyupKilos($event, weigh)" class="units" /> kg
+                                                </span>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="radio" [(ngModel)]="user.unitsS" name="weight{{weigh.id}}" value="0">lbs
+                                                <input type="radio" [(ngModel)]="user.unitsS" name="weight{{weigh.id}}" value="1">Stones
+                                                <input type="radio" [(ngModel)]="user.unitsS" name="weight{{weigh.id}}" value="2">Kilos
+                                              
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-12">
+                                        <fieldset class="form-group">
+                                            <div class="col-md-4"><label class="control-label">Date:</label></div>
+                                            <div class="col-md-8">
+                                                <span *ngIf="weigh.weighDate">{{weigh.weighDate | date:'dd/MM/yyyy HH:mm:ss'}}</span><span *ngIf="!weigh.weighDate">Select a date</span> <button (click)="toggleDateControl()"><i class="glyphicon glyphicon-calendar"></i></button><button *ngIf="showDateControl" (click)="toggleTimeControl()"><i class="glyphicon glyphicon-time"></i></button>
+                                            </div>
+
+                                            <div *ngIf="showDateControl">
+                                                <datepicker [(ngModel)]="weigh.weighDate" [showWeeks]="true"></datepicker>
+                                            </div>
+                                            <div *ngIf="showTimeControl">
+                                                <timepicker [(ngModel)]="weigh.weighDate"></timepicker>
+                                            </div>
+                                         </fieldset>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                        <div class="col-md-12">
+                                            <fieldset class="form-group">
+                                                <div class="col-md-4">
+                                                    <label for="txtWeightKilos"  class="control-label">
+                                                        Comment
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-8"><textarea rows="6" cols="20" [(ngModel)]="weigh.comment" class="form-control"></textarea></div>
+                                            </fieldset>
+
+                                            <button (click)="saveWeighing(weigh)">Save</button> <button (click)="cancelEdit(weigh)">cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                        </td>
+
+                    </tr>
+                </table>
+
+
+                <div class="row">
+                    <div class="col-md-12" *ngIf="!newWeighing">
+                        <button (click)="addNew()">Add</button><button (click)="test()">Test</button>
+
+                    </div>
+                    <div class="col-md-10" *ngIf="newWeighing">
+                        <div class="row edit-panel">
+                            <form (submit)="onSubmit($event)" #heroForm="ngForm">
+   
+                                <fieldset class="form-group form-inline row">
+                                     <div class="col-md-3"><label [attr.for]="'txtWeightKilosNew'" class="control-label"> Weight</label></div>
+                                    <div class="col-md-5">
+                                        <span *ngIf="user.units == 0">
+                                            <input type="number" [id]="'txtWeightLbs' + newWeighing.id" [name]="'txtWeightLbs' + newWeighing.id" [(ngModel)]="newWeighing.weightPounds" required #weightCtl (keyup)="onKeyuplbs($event, newWeighing)" class="units" min="0" /> lbs
+                                        </span>
+                                        <span *ngIf="user.units == 1">
+                                            <input type="number" [id]="'txtWeightsts' + newWeighing.id" [name]="'txtWeightsts' + newWeighing.id" [(ngModel)]="newWeighing.weightSt" required #weightCtl (keyup)="onKeyupst($event, newWeighing)" class="units" min="0" /> St
+                                            <input type="number" [id]="'txtWeightstlbs' + newWeighing.id" [name]="'txtWeightstlbs' + newWeighing.id"  [(ngModel)]="newWeighing.weightStlbs" required #weightCtl (keyup)="onKeyupst($event, newWeighing)" class="units" max="13.99" /> lbs
+                                        </span>
+                                        <span *ngIf="user.units == 2">
+                                            <input type="number" [id]="'txtWeightKilos' + newWeighing.id" [name]="'txtWeightstlbs' + newWeighing.id" [(ngModel)]="newWeighing.weightKilos" required #weightCtl (keyup)="onKeyupKilos($event, newWeighing)" class="units" min="0" /> kg
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="radio" [(ngModel)]="user.unitsS" name="weightnew" value="0">lbs
+                                        <input type="radio" [(ngModel)]="user.unitsS" name="weightnew" value="1">Stones
+                                        <input type="radio" [(ngModel)]="user.unitsS" name="weightnew" value="2">Kilos
+
+                                    </div>
+
+                                </fieldset>
+
+                                <fieldset class="form-group form-inline row">
+
+                                        <div class="col-md-3"><label class="control-label">Date:</label></div>
+                                        <div class="col-md-9"> <span *ngIf="newWeighing.weighDate">{{newWeighing.weighDate | date:'dd/MM/yyyy HH:mm:ss'}}</span><span *ngIf="!newWeighing.weighDate">Select a date</span>
+                                            <button (click)="toggleDateControl()"><i class="glyphicon glyphicon-calendar"></i></button><button *ngIf="showDateControl" (click)="toggleTimeControl()"><i class="glyphicon glyphicon-time"></i></button>
+                                            <div *ngIf="showDateControl">
+                                                <datepicker [(ngModel)]="newWeighing.weighDate" [showWeeks]="true" name="dtpck"></datepicker>
+                                            </div>
+                                            <div *ngIf="showTimeControl">
+                                                <timepicker [(ngModel)]="newWeighing.weighDate" name="tmpck"></timepicker>
+                                            </div>
+                                        </div>
+                                </fieldset>
+                                    <fieldset class="form-group form-inline row">
+                                        <div class="col-md-3">
+                                            <label for="txtWeightKilos">
+                                                Comment
+                                            </label>
+                                        </div>
+                                        <div class="col-md-9"><textarea rows="6" cols="20" id="txtComment" name="txtComment" [(ngModel)]="newWeighing.comment" #spy2 class="form-control"></textarea></div>
+                                    </fieldset>
+                                    <div class="col-md-6">
+
+
+                                        <button type="button" (click)="addWeighing()">Save</button> <button type="button" (click)="cancel()">cancel</button>
+
+                                    </div>
+
+</form>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>

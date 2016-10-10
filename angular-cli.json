@@ -15,9 +15,15 @@
       "prefix": "app",
       "mobile": false,
       "styles": [
+        "../node_modules/bootstrap/dist/css/bootstrap.css",
         "styles.css"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/ng2-bootstrap/bundles/ng2-bootstrap.js",
+         "../node_modules/ng2-toastr/bundles/ng2-toastr.js",
+          "../node_modules/intl/dist/intl.js",
+        "../node_modules/intl/locale-data/jsonp/en-US.js"
+      ],
       "environments": {
         "source": "environments/environment.ts",
         "dev": "environments/environment.ts",
